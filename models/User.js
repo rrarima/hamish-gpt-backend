@@ -6,7 +6,7 @@ const sequelize = new Sequelize('hamishgpt', 'root', 'root', {
   dialect: 'mysql'
 });
 
-const User = sequelize.define('User', {
+const User = sequelize.define('users', {
   userid: {
     type: DataTypes.INTEGER,
     autoIncrement: true,

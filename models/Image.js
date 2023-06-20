@@ -5,7 +5,7 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
   dialect: 'mysql'
 });
 
-const Image = sequelize.define('Images', {
+const Image = sequelize.define('images', {
   imageid: {
     type: DataTypes.INTEGER,
     autoIncrement: true,

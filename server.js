@@ -56,4 +56,4 @@ app.listen(8000, () => {
   console.log('Server is running at http://localhost:8000');
 });
 
-// createUser('test', 'rarimar@outlook.com', 'epsgpt');
+// createUser('test1', 'rarimar1@outlook.com', 'epsgpt');
