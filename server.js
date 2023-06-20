@@ -28,10 +28,6 @@ app.post('/registration', function (request, response) {
   });
 });
 
-app.listen(3001, function () {
-  console.log('Express server is listerning on port 3000');
-});
-
 (async () => {
   try {
     await sequelize.authenticate();
