@@ -1,11 +1,11 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
 const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
-  host: 'localhost',
+  host: 'db',
   dialect: 'mysql'
 });
 
-const Photo = sequelize.define('Photo', {
+const Image = sequelize.define('Images', {
   imageid: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
@@ -23,6 +23,11 @@ const Photo = sequelize.define('Photo', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  image_description: {
+    type: DataTypes.STRING
+  },
+}, {
+  timestamps: false,
 });
 
-module.exports = Photo;
+module.exports = Image;
