@@ -1,12 +1,16 @@
 const express = require('express');
+const cors = require('cors');
 const { Sequelize, DataTypes } = require('sequelize');
+const request = require('request');
 const User = require('./models/User')
+const Image = require('./models/Image')
 
 const app = express();
+app.use(cors())
 app.use(express.json());
 
 const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
-  host: 'localhost',
+  host: 'db',
   dialect: 'mysql'
 });
 
@@ -20,22 +24,19 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
 })();
 
 
-app.get('/', (req, res) => {
-  res.send('Hello BlaJon');
-})
-
-app.get('/i-am-zebra', (req, res) => {
-  res.send('I am Girraffe');
-});
-
-app.get('/test', (req, res) => {
-  sequelize.query('SELECT 1 + 1 AS result', { type: sequelize.QueryTypes.SELECT})
-  .then(results => {
-    res.send(`Database test successful, result is: ${results[0].result}`);
-  })
-  .catch(error => {
-    throw error;
-  });
+app.get('/userimages/:userid', async (req, res) => {
+  const userid = req.params.userid;
+  try {
+    const images = await Image.findAll({ where: { userid: userid } });
+    if (!images.length) {
+      res.status(404).send('Images not found for the user');
+      return;
+    }
+    res.json(images);
+  } catch (error) {
+    console.error('Error getting images:', error);
+    res.status(500).send('Internal server error');
+  }
 });
 
 // const createUser = async (username, email, password) => {
@@ -55,4 +56,4 @@ app.listen(8000, () => {
   console.log('Server is running at http://localhost:8000');
 });
 
-// createUser('eps', 'rarimar4@gmail.com', 'epsgpt');
+// createUser('test1', 'rarimar1@outlook.com', 'epsgpt');
