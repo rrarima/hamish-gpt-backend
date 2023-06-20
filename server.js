@@ -14,6 +14,24 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
   dialect: 'mysql'
 });
 
+app.post('/registration', function (request, response) {
+  return User.create({
+    username: request.body.username,
+    email: request.body.email,
+    password: request.body.password
+  }).then(function (users) {
+    if (users) {
+      response.send(users);
+    } else {
+      response.status(400).send('Error in insert new record');
+    }
+  });
+});
+
+app.listen(3001, function () {
+  console.log('Express server is listerning on port 3000');
+});
+
 (async () => {
   try {
     await sequelize.authenticate();
