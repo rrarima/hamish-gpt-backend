@@ -14,6 +14,10 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
   dialect: 'mysql'
 });
 
+app.get('/ping', function(request, response) {
+  response.send("pong");
+});
+
 app.post('/registration', function (request, response) {
   return User.create({
     username: request.body.username,
