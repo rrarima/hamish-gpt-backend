@@ -19,7 +19,6 @@ app.get('/ping', function(request, response) {
 });
 
 app.post('/registration', async (request, response) => {
-  console.log(request.body)
   const user = await User.create({
     username: request.body.username,
     email: request.body.email,
