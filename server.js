@@ -14,18 +14,22 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
   dialect: 'mysql'
 });
 
-app.post('/registration', function (request, response) {
-  return User.create({
+app.get('/ping', function(request, response) {
+  response.send("pong");
+});
+
+app.post('/registration', async (request, response) => {
+  console.log(request.body)
+  const user = await User.create({
     username: request.body.username,
     email: request.body.email,
     password: request.body.password
-  }).then(function (users) {
-    if (users) {
-      response.send(users);
-    } else {
-      response.status(400).send('Error in insert new record');
-    }
-  });
+  })
+  if (user) {
+    response.send(user);
+  } else {
+    response.status(400).send('Error in insert new record');
+  }
 });
 
 (async () => {
@@ -69,5 +73,6 @@ app.get('/userimages/:userid', async (req, res) => {
 app.listen(8000, () => {
   console.log('Server is running at http://localhost:8000');
 });
+
 
 // createUser('test1', 'rarimar1@outlook.com', 'epsgpt');
