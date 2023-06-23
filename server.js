@@ -19,17 +19,22 @@ app.get('/ping', function(request, response) {
 });
 
 app.post('/registration', async (request, response) => {
-  const user = await User.create({
-    username: request.body.username,
-    email: request.body.email,
-    password: request.body.password
-  })
-  if (user) {
-    response.send(user);
-  } else {
-    response.status(400).send('Error in insert new record');
-  }
-});
+  try {
+    const user = await User.create({
+      username: request.body.username,
+      email: request.body.email,
+      password: request.body.password
+    })
+    if (user) {
+      response.send(user);
+    } else {
+      response.status(400).send('Error in insert new record');
+    }
+  } catch (error) {
+    console.error(error);
+    response.status(400).send(error.errors[0].message);
+  } 
+  });
 
 (async () => {
   try {
