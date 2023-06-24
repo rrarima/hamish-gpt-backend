@@ -20,11 +20,15 @@ app.get('/ping', function(request, response) {
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  if (username === null || username.length < 1) {
+  if (username === null || username.length < 1)  {
     return response.status(400).send('Username is invalid');
   }
   if (email === null || email.length < 1) {
     return response.status(400).send('Email is invalid');
+  }
+  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  if (!email.match(validRegex)) {
+    return response.status(400).send('Invalid email address');
   }
   if (password === null || password.length < 8 || password.length > 20) {
     return response.status(400).send('Password is invalid');
