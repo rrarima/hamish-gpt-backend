@@ -5,22 +5,27 @@ const request = require('request');
 const User = require('./models/User')
 const Image = require('./models/Image')
 
+const bcrypt = require('bcrypt');
 const app = express();
 app.use(cors())
 app.use(express.json());
+app.use((req, res, next) => {
+  console.log(req.body);
+  next();
+});
 
 const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
   host: 'db',
   dialect: 'mysql'
 });
 
-app.get('/ping', function(request, response) {
+app.get('/ping', function (request, response) {
   response.send("pong");
 });
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  if (username === null || username.length < 1)  {
+  if (username === null || username.length < 1) {
     return response.status(400).send('Username is invalid');
   }
   if (email === null || email.length < 1) {
@@ -47,8 +52,31 @@ app.post('/registration', async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(400).send(error.errors[0].message);
-  } 
+  }
+});
+
+app.post('/login', async (req, res) => {
+  console.log('Login endpoint hit. Request body:', req.body)
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ where: { username: username } });
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res.status(400).json({ error: 'Invalid password' });
+  }
+  console.log('Login successful:', user);
+  res.json({
+    message: 'Login successful',
+    user: {
+      id: user.id,
+      username: user.username,
+    },
   });
+});
 
 (async () => {
   try {
