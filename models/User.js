@@ -1,7 +1,12 @@
+require('dotenv').config();
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+
 const { Sequelize, Op, Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 
-const sequelize = new Sequelize('hamishgpt', 'root', 'root', {
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: 'db',
   dialect: 'mysql'
 });
