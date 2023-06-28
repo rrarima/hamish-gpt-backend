@@ -25,7 +25,7 @@ app.get('/ping', function(request, response) {
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  console.log(request.body);
+  console.log(username);
   if (username === null || username.length < 3)  {
     return response.status(400).json({ error: 'Username is invalid' });
   }
