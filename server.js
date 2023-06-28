@@ -32,7 +32,7 @@ app.post('/registration', async (request, response) => {
   if (email === null || email.length < 1) {
     return response.status(400).json({ error: 'Email is invalid' });
   }
-  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  var validRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   if (!email.match(validRegex)) {
     return response.status(400).json({ error: 'Invalid email address' });
   }
