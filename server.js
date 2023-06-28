@@ -52,7 +52,7 @@ app.post('/registration', async (request, response) => {
     }
   } catch (error) {
     console.error(error);
-    response.status(400).json(error.errors[0].message);
+    response.status(400).json({ error: error.errors[0].message });
   } 
   });
 
