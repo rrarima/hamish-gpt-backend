@@ -1,15 +1,20 @@
+require('dotenv').config();
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+
 const express = require('express');
 const cors = require('cors');
 const { Sequelize, DataTypes } = require('sequelize');
 const request = require('request');
-const User = require('./models/User')
-const Image = require('./models/Image')
+const User = require('./models/User');
+const Image = require('./models/Image');
 
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 
-const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: 'db',
   dialect: 'mysql'
 });
@@ -74,19 +79,6 @@ app.get('/userimages/:userid', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-// const createUser = async (username, email, password) => {
-//   try{
-//     const newUser = await User.create({
-//       username: username,
-//       email: email,
-//       password: password
-//     });
-//     console.log('User created!');
-//   } catch (error){
-//       console.error('Error creating user', error);
-//   }
-// };
 
 app.listen(8000, () => {
   console.log('Server is running at http://localhost:8000');
