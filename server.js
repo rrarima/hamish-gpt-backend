@@ -1,3 +1,8 @@
+require('dotenv').config();
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+
 const express = require('express');
 const cors = require('cors');
 const { Sequelize, DataTypes } = require('sequelize');
@@ -9,14 +14,14 @@ const config = require('./config');
 
 const bcrypt = require('bcrypt');
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
   console.log(req.body);
   next();
 });
 
-const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: 'db',
   dialect: 'mysql'
 });
@@ -37,14 +42,14 @@ const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  console.log(request.body);
-  if (username === null || username.length < 1)  {
+  console.log(username);
+  if (username === null || username.length < 3)  {
     return response.status(400).json({ error: 'Username is invalid' });
   }
   if (email === null || email.length < 1) {
     return response.status(400).json({ error: 'Email is invalid' });
   }
-  var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  var validRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
   if (!email.match(validRegex)) {
     return response.status(400).json({ error: 'Invalid email address' });
   }
@@ -101,7 +106,6 @@ app.post('/login', async (req, res) => {
   }
 })();
 
-
 app.get('/userimages/:userid', async (req, res) => {
   const userid = req.params.userid;
   try {
@@ -116,7 +120,6 @@ app.get('/userimages/:userid', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 app.listen(8000, () => {
   console.log('Server is running at http://localhost:8000');

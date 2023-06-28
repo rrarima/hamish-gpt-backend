@@ -1,4 +1,4 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, Op, Model, DataTypes } = require('sequelize');
 const bcrypt = require('bcrypt');
 
 const sequelize = new Sequelize('hamishgpt', 'root', 'root', {
@@ -6,33 +6,40 @@ const sequelize = new Sequelize('hamishgpt', 'root', 'root', {
   dialect: 'mysql'
 });
 
-const User = sequelize.define('users', {
+let User = sequelize.define('users', {
   userid: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true,
   },
   username: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING(40),
     allowNull: false,
     validate: {
       notEmpty: true,
-    }
+      min: 3
+    },
+    unique: true,
   },
   email: {
-    type: DataTypes.STRING,
+    type: Sequelize.STRING,
     allowNull: false,
-    unique: true,
     validate: {
-      notEmpty: true,
+      isEmail: true,
+      isLowercase: true,
+      notEmpty: true
+    },
+    unique: {
+      args: 'email',
+      msg: 'The email is already taken!'
     }
   },
   password: {
-    type: DataTypes.STRING,
+    type: DataTypes.STRING(64),
     allowNull: false,
     validate: {
       notEmpty: true,
-      len: [8, 20],
+      len: [8, 20]
     }
   },
 }, {
@@ -43,5 +50,6 @@ const User = sequelize.define('users', {
     }
   }
 });
+
 
 module.exports = User;
