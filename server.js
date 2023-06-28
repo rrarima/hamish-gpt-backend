@@ -25,7 +25,6 @@ app.get('/ping', function(request, response) {
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  console.log(username);
   if (username === null || username.length < 3)  {
     return response.status(400).json({ error: 'Username is invalid' });
   }
@@ -59,7 +58,6 @@ app.post('/registration', async (request, response) => {
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -80,9 +78,4 @@ app.get('/userimages/:userid', async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log('Server is running at http://localhost:8000');
-});
-
-
-// createUser('test1', 'rarimar1@outlook.com', 'epsgpt');
+app.listen(8000, () => {});
