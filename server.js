@@ -21,7 +21,7 @@ app.get('/ping', function(request, response) {
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
   console.log(request.body);
-  if (username === null || username.length < 1)  {
+  if (username === null || username.length < 3)  {
     return response.status(400).json({ error: 'Username is invalid' });
   }
   if (email === null || email.length < 1) {
@@ -59,7 +59,6 @@ app.post('/registration', async (request, response) => {
     console.error('Unable to connect to the database:', error);
   }
 })();
-
 
 app.get('/userimages/:userid', async (req, res) => {
   const userid = req.params.userid;
