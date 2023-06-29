@@ -42,7 +42,6 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  console.log(username);
   if (username === null || username.length < 3)  {
     return response.status(400).json({ error: 'Username is invalid' });
   }
@@ -69,7 +68,7 @@ app.post('/registration', async (request, response) => {
     }
   } catch (error) {
     console.error(error);
-    response.status(400).send(error.errors[0].message);
+    response.status(400).json({ error: error.errors[0].message });
   }
 });
 
@@ -100,7 +99,6 @@ app.post('/login', async (req, res) => {
 (async () => {
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
@@ -121,6 +119,4 @@ app.get('/userimages/:userid', async (req, res) => {
   }
 });
 
-app.listen(8000, () => {
-  console.log('Server is running at http://localhost:8000');
-});
+app.listen(8000, () => {});
