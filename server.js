@@ -7,21 +7,37 @@ const express = require('express');
 const cors = require('cors');
 const { Sequelize, DataTypes } = require('sequelize');
 const request = require('request');
-const User = require('./models/User');
-const Image = require('./models/Image');
+const User = require('./models/User')
+const Image = require('./models/Image')
+const jwt = require('jsonwebtoken');
+const config = require('./config');
 
+const bcrypt = require('bcrypt');
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use((req, res, next) => {
+  next();
+});
 
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: 'db',
   dialect: 'mysql'
 });
 
-app.get('/ping', function(request, response) {
-  response.send("pong");
-});
+// function authenticateToken(req, res, next) {
+//   const authHeader = req.headers['authorization'];
+//   const token = authHeader && authHeader.split(' ')[1];
+
+//   if (token == null) return res.sendStatus(401);
+
+//   jwt.verify(token, config.JWT_KEY, (err, user) => {
+//     if (err) return res.sendStatus(403);
+
+//     req.user = user;
+//     next();
+//   });
+// }
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
@@ -52,8 +68,30 @@ app.post('/registration', async (request, response) => {
   } catch (error) {
     console.error(error);
     response.status(400).json({ error: error.errors[0].message });
-  } 
+  }
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  const user = await User.findOne({ where: { username: username } });
+  if (!user) {
+    return res.status(400).json({ error: 'User not found' });
+  }
+
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+    return res.status(400).json({ error: 'Invalid password' });
+  }
+
+  const token = jwt.sign({ id: user.id }, config.JWT_KEY, { expiresIn: '1h' });
+
+  res.json({
+    message: 'Login successful',
+    token: token,
   });
+});
+
 
 (async () => {
   try {
