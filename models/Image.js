@@ -1,6 +1,10 @@
-const { Sequelize, DataTypes } = require('sequelize');
+require('dotenv').config();
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
 
-const sequelize = new Sequelize('hamishgpt', 'user', 'root', {
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: 'db',
   dialect: 'mysql'
 });
