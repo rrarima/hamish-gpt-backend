@@ -17,7 +17,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
-  console.log(req.body);
   next();
 });
 
@@ -73,7 +72,6 @@ app.post('/registration', async (request, response) => {
 });
 
 app.post('/login', async (req, res) => {
-  console.log('Login endpoint hit. Request body:', req.body)
   const { username, password } = req.body;
 
   const user = await User.findOne({ where: { username: username } });
@@ -88,7 +86,6 @@ app.post('/login', async (req, res) => {
 
   const token = jwt.sign({ id: user.id }, config.JWT_KEY, { expiresIn: '1h' });
 
-  console.log('Login successful:', user);
   res.json({
     message: 'Login successful',
     token: token,
