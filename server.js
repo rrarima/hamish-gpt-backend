@@ -72,9 +72,9 @@ app.post('/registration', async (request, response) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { username: username } });
+  const user = await User.findOne({ where: { email: email } });
   if (!user) {
     return res.status(400).json({ error: 'User not found' });
   }
