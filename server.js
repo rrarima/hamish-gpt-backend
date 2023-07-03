@@ -31,7 +31,7 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 16 * 1024 * 1024,
+    fileSize: 20 * 1024 * 1024,
   },
 });
 
@@ -52,8 +52,6 @@ function authenticateToken(req, res, next) {
 
 app.post('/images', authenticateToken, upload.single('file'), async (req, res) => {
 
-  console.log('Received file:', req.file);
-  console.log('Received description:', req.body.description);
   const blob = bucket.file(req.file.originalname);
   const blobStream = blob.createWriteStream({
     metadata: {
@@ -70,18 +68,14 @@ app.post('/images', authenticateToken, upload.single('file'), async (req, res) =
       `https://storage.googleapis.com/${bucket.name}/${blob.name}`
     );
 
-    console.log('Image public URL:', publicUrl);
-    console.log('Req.user:', req.user);
-
     try {
       const image = await Image.create({
-        userid: req.user.userid, // you might want to authenticate and set req.user.id
+        userid: req.user.userid,
         image_url: publicUrl,
         image_description: req.body.description,
       })
 
       if (image) {
-        console.log('Image saved:', image);
         res.json({ status: 1, message: 'Image saved' });
       } else {
         res.json({ status: 0, message: 'Unable to save image' });
