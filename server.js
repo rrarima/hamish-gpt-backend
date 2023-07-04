@@ -16,8 +16,6 @@ const config = require('./config');
 const bcrypt = require('bcrypt');
 const app = express();
 
-module.exports = app;
-
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
@@ -121,4 +119,8 @@ app.get('/userimages/:userid', async (req, res) => {
   }
 });
 
-app.listen(8000, () => {});
+const server = app.listen(port, () => {});
+module.exports = {
+  app,
+  server
+};
