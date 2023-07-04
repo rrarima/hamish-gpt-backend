@@ -2,6 +2,7 @@ require('dotenv').config();
 const dbName = process.env.DB_NAME;
 const dbUser = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
+const port = process.env.PORT || 8000;
 
 const express = require('express');
 const cors = require('cors');
@@ -14,6 +15,9 @@ const config = require('./config');
 
 const bcrypt = require('bcrypt');
 const app = express();
+
+module.exports = app;
+
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
@@ -72,9 +76,9 @@ app.post('/registration', async (request, response) => {
 });
 
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  const user = await User.findOne({ where: { username: username } });
+  const user = await User.findOne({ where: { email: email } });
   if (!user) {
     return res.status(400).json({ error: 'User not found' });
   }
@@ -89,6 +93,7 @@ app.post('/login', async (req, res) => {
   res.json({
     message: 'Login successful',
     token: token,
+    username: user.username,
   });
 });
 

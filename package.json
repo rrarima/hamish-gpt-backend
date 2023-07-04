@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +15,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.0",
     "express-flash": "^0.0.2",
     "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.3.5",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
@@ -25,6 +25,9 @@
     "sequelize": "^6.32.0"
   },
   "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0",
     "nodemon": "^2.0.22"
   }
 }
