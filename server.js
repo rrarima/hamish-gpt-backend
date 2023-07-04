@@ -6,13 +6,16 @@ const port = process.env.PORT || 8000;
 
 const express = require('express');
 const cors = require('cors');
-const { Sequelize, DataTypes } = require('sequelize');
-const request = require('request');
+const { Sequelize } = require('sequelize');
 const User = require('./models/User')
 const Image = require('./models/Image')
 const jwt = require('jsonwebtoken');
 const config = require('./config');
-
+const multer = require("multer");
+const { Storage } = require("@google-cloud/storage");
+const storage = new Storage({ keyFilename: "./vision-ai-api-386409-1425ea3b1e7f.json" });
+const bucket = storage.bucket("hamish-gpt-images");
+const { format } = require('url');
 const bcrypt = require('bcrypt');
 const app = express();
 
@@ -27,23 +30,72 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   dialect: 'mysql'
 });
 
-// function authenticateToken(req, res, next) {
-//   const authHeader = req.headers['authorization'];
-//   const token = authHeader && authHeader.split(' ')[1];
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 20 * 1024 * 1024,
+  },
+});
 
-//   if (token == null) return res.sendStatus(401);
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-//   jwt.verify(token, config.JWT_KEY, (err, user) => {
-//     if (err) return res.sendStatus(403);
+  if (token == null) return res.sendStatus(401);
 
-//     req.user = user;
-//     next();
-//   });
-// }
+  jwt.verify(token, config.JWT_KEY, (err, user) => {
+    if (err) return res.sendStatus(403);
+
+    req.user = user;
+    next();
+  });
+}
+
+
+app.post('/images', authenticateToken, upload.single('file'), async (req, res) => {
+
+  const blob = bucket.file(req.file.originalname);
+  const blobStream = blob.createWriteStream({
+    metadata: {
+      contentType: req.file.mimetype,
+    },
+  });
+
+  blobStream.on('error', (err) => {
+    res.status(500).json({ error: 'Something is wrong! Unable to upload at the moment.' });
+  });
+
+  blobStream.on('finish', async () => {
+    const publicUrl = format(
+      `https://storage.googleapis.com/${bucket.name}/${blob.name}`
+    );
+
+    try {
+      const image = await Image.create({
+        userid: req.user.userid,
+        image_url: publicUrl,
+        image_description: req.body.description,
+      })
+
+      if (image) {
+        res.json({ status: 1, message: 'Image saved' });
+      } else {
+        res.json({ status: 0, message: 'Unable to save image' });
+      }
+    } catch (error) {
+      console.error('Error saving image:', error);
+      res.status(500).json({ error: 'Error occurred during image saving process' });
+    }
+  });
+
+  blobStream.end(req.file.buffer);
+});
+
+
 
 app.post('/registration', async (request, response) => {
   const { username, email, password } = request.body;
-  if (username === null || username.length < 3)  {
+  if (username === null || username.length < 3) {
     return response.status(400).json({ error: 'Username is invalid' });
   }
   if (email === null || email.length < 1) {
@@ -86,7 +138,7 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ error: 'Invalid password' });
   }
 
-  const token = jwt.sign({ id: user.id }, config.JWT_KEY, { expiresIn: '1h' });
+  const token = jwt.sign({ userid: user.userid }, config.JWT_KEY, { expiresIn: '1h' });
 
   res.json({
     message: 'Login successful',
@@ -96,6 +148,9 @@ app.post('/login', async (req, res) => {
 });
 
 
+
+
+
 (async () => {
   try {
     await sequelize.authenticate();
@@ -103,6 +158,8 @@ app.post('/login', async (req, res) => {
     console.error('Unable to connect to the database:', error);
   }
 })();
+
+
 
 app.get('/userimages/:userid', async (req, res) => {
   const userid = req.params.userid;
