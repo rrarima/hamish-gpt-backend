@@ -101,7 +101,7 @@ describe("Tasks API", function() {
           .post("/registration")
           .send({
             "username": "ur9",
-            "email": "ddsdszc@gmail.compq",
+            "email": "ddsdszc1@gmail.com",
             "password": "sdfsdfdsfsdfsdfsdfsdfssfddsfsewsfsewweewwwfwewfwewfwwfw"
           })
           .end(function (err, response) {

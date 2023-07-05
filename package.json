@@ -29,7 +29,6 @@
   "devDependencies": {
     "chai": "^4.3.7",
     "chai-http": "^4.4.0",
-    "live-server": "^1.2.2",
     "mocha": "^10.2.0",
     "nodemon": "^1.14.9"
   }
