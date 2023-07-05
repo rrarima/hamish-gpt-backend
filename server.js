@@ -142,6 +142,7 @@ app.post('/login', async (req, res) => {
     message: 'Login successful',
     token: token,
     username: user.username,
+    userid: user.userid,
   });
 });
 
@@ -159,10 +160,13 @@ app.post('/login', async (req, res) => {
 
 
 
-app.get('/userimages/:userid', async (req, res) => {
-  const userid = req.params.userid;
+app.get('/userimages/:userid', authenticateToken, async (req, res) => {
+  if (req.user.userid !== parseInt(req.params.userid, 10)) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
   try {
-    const images = await Image.findAll({ where: { userid: userid } });
+    const images = await Image.findAll({ where: { userid: req.user.userid } });
     if (!images.length) {
       res.status(404).json({ error: 'Images not found for the user' });
       return;
