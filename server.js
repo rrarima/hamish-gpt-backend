@@ -2,6 +2,7 @@ require('dotenv').config();
 const dbName = process.env.DB_NAME;
 const dbUser = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
+const port = process.env.PORT || 8000;
 
 const express = require('express');
 const cors = require('cors');
@@ -17,6 +18,7 @@ const bucket = storage.bucket("hamish-gpt-images");
 const { format } = require('url');
 const bcrypt = require('bcrypt');
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 app.use((req, res, next) => {
@@ -178,4 +180,8 @@ app.get('/userimages/:userid', authenticateToken, async (req, res) => {
   }
 });
 
-app.listen(8000, () => { });
+const server = app.listen(port, () => {});
+module.exports = {
+  app,
+  server
+};

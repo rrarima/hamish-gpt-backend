@@ -1,0 +1,28 @@
+version: "3.8"
+services:
+  test:
+    build:
+      context: .
+      dockerfile: ./DockerfileTest
+    volumes:
+      - .:/app
+      - web-node-modules:/app/node_modules
+    environment:
+      PORT: 8000
+    depends_on:
+      - db
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hamishgpt
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql-data:
+  web-node-modules:

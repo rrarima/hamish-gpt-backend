@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --timeout 10000"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +27,9 @@
     "sequelize": "^6.32.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "chai": "^4.3.7",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.2.0",
+    "nodemon": "^1.14.9"
   }
 }
