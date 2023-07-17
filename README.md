@@ -46,6 +46,10 @@ The application uses JSON Web Tokens (JWT) for authentication. To authenticate A
 Authorization: Bearer <jwt-token>
 ```
 
+## Database
+
+This project uses MySQL as the database. The database configuration can be found in the server.js file, and the credentials are read from environment variables (DB_NAME, DB_USERNAME, DB_PASSWORD).
+
 ## Dependencies
 
 The project relies on the following dependencies:
